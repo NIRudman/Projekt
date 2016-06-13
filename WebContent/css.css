@@ -1,0 +1,10 @@
+/*http://getbootstrap.com/components/#navbar-fixed-top*/
+/*Makes the content not slide underneath the "navbar-fixed-top" and "navbar-fixed-bottom"*/
+body { 
+	padding-top: 70px;
+	padding-bottom: 70px; /*recommended 70, but not for me atm*/
+} 
+
+.navbar-brand {
+  margin:0;
+}
