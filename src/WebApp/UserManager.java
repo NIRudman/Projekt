@@ -144,8 +144,6 @@ public class UserManager
 		String sql = "INSERT INTO " + userType[user.getUserType() - 1] + "(" + colum  + ") " +
 				"VALUES (" + values + ")";
 		
-		
-		
 				ResultSet keys = null;
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);

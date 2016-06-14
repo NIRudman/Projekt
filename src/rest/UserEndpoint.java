@@ -40,16 +40,16 @@ public class UserEndpoint {
 	* @return
 	*/
 	@POST
-	public Response create(final User user) {
+	@Path("/insert")
+	public Response create(final Object[] input) {
 		
 		try {
-			userManager.insertUser(user);
+			userManager.insertUser(new User(1, input));
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 		}
 		//here we use User#getId(), assuming that it provides the identifier to retrieve the created User resource. 
-		return Response.created(UriBuilder.fromResource(UserEndpoint.class).path(String.valueOf(user.getId())).build())
+		return Response.created(UriBuilder.fromResource(UserEndpoint.class).path(String.valueOf(input)).build())
 				.build();
 	}
 
@@ -79,7 +79,6 @@ public class UserEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object[][] listAll(@QueryParam("start") final Integer startPosition,
 			@QueryParam("max") final Integer maxResult) {
-		//userManager.updateTable("user_info");
 		final Object[][] users = userManager.getTable("user_info");
 		return users;
 	}
