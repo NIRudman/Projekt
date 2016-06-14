@@ -256,7 +256,7 @@ public class UserManager
 			
 			// Update Table when done
 			if (affected == 1) {
-				updateTable(userType[1]);
+				updateTable(userType[user.getUserType() - 1]);
 				return true;
 			} else {
 				return false;

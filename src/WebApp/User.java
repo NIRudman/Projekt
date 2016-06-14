@@ -16,6 +16,17 @@ public class User extends UserComponent
 		{
 			this.id = (int) item[0];
 		}
+		else
+		{
+			boolean isNmb = true;
+			for (char c : item[0].toString().toCharArray())
+		    {
+		        if (!Character.isDigit(c)) 
+		        	isNmb = false;
+		    }
+			if(isNmb)
+				this.id = Integer.parseInt(item[0].toString());
+		}
 	}
 	
 	public int getId()

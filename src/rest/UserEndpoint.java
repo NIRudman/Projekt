@@ -89,11 +89,10 @@ public class UserEndpoint {
 	* @return
 	*/
 	@PUT
-	@Path("/{id:[0-9][0-9]*}")
-	public Response update(@PathParam("id") int id, final User user) {
+	@Path("/update")
+	public Response update(final Object[] input) {
 		try {
-			user.setId(id);
-			userManager.updateUser(user);
+			userManager.updateUser(new User(1, input));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
