@@ -71,7 +71,7 @@ public abstract class UserComponent
 	
 	public enum UserType
 	{
-		UNDEFINED(0), USER(1);  
+		UNDEFINED(0), USER(1), SEARCH(2);  
 		private int type;
 		private UserType(int type)
 		{

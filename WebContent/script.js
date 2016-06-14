@@ -39,48 +39,116 @@ $(document).ready(function()
 			        alert(errMsg);
 			    }
 			});
-			location.reload();
+			addUsers();
 		}
 	});
 	
 	// VARIABLES
 	var amountOfUsers = 0;
 	
-	// GET USERS AS JSON FROM API
-	$.getJSON("http://localhost:8080/Projekt/rest/users/"
-	, function(user) {
-				
-		$.each(user, function(j, object) {
-			
-			// SAVE AMOUNT OF USERS
-			amountOfUsers++;
-			
-			// ADD USER IN USER TABLE
-			$("#user-table").append(
-					'<tr id="row-' + amountOfUsers + '">' + 
-					'<td id="id-' + amountOfUsers + '">'
-					+ object[0] + '</td>' + // ID
-					'<td><input type="text" id="table-fn-' 
-					+ amountOfUsers + '" value="'
-					+ object[2] + '"/></td>' + // FIRSTNAME
-					'<td><input type="text" id="table-ln-' 
-					+ amountOfUsers + '" value="'
-					+ object[3] + '"/></td>' + // LASTNAME
-					'<td><input type="text" id="table-e-' 
-					+ amountOfUsers + '" value="'
-					+ object[1] + '"/></td><td>' // EMAIL
-					
-					// CHANGE BUTTON. ADD USER-ID TO ID OF BUTTON
-					+ '<button id="update-' + amountOfUsers + '" class="update"' +
-					'type="button"><strong>Update</strong></button> &nbsp' +
-					
-					// DELETE BUTTON. ADD USER-ID TO ID OF BUTTON
-					'<button id="delete-' + amountOfUsers + '" class="delete"' +
-					'type="button"><strong>Delete</strong></button>' + 
-					'</td></tr>'
-			);
-		});
+	function addUsers()
+	{
+		// REMOVE OLD DATA
+		amountOfUsers == 0;
+		$('#user-table > tr').remove();
 		
+		// GET USERS AS JSON FROM API
+		$.getJSON("http://localhost:8080/Projekt/rest/users/"
+		, function(user) {
+					
+			$.each(user, function(j, object) {
+				
+				// SAVE AMOUNT OF USERS
+				amountOfUsers++;
+				
+				// ADD USER IN USER TABLE
+				$("#user-table").append(
+						'<tr id="row-' + amountOfUsers + '">' + 
+						'<td id="id-' + amountOfUsers + '">'
+						+ object[0] + '</td>' + // ID
+						'<td><input type="text" id="table-fn-' 
+						+ amountOfUsers + '" value="'
+						+ object[2] + '"/></td>' + // FIRSTNAME
+						'<td><input type="text" id="table-ln-' 
+						+ amountOfUsers + '" value="'
+						+ object[3] + '"/></td>' + // LASTNAME
+						'<td><input type="text" id="table-e-' 
+						+ amountOfUsers + '" value="'
+						+ object[1] + '"/></td><td>' // EMAIL
+						
+						// CHANGE BUTTON. ADD USER-ID TO ID OF BUTTON
+						+ '<button id="update-' + amountOfUsers + '" class="update"' +
+						'type="button"><strong>Update</strong></button> &nbsp' +
+						
+						// DELETE BUTTON. ADD USER-ID TO ID OF BUTTON
+						'<button id="delete-' + amountOfUsers + '" class="delete"' +
+						'type="button"><strong>Delete</strong></button>' + 
+						'</td></tr>'
+				);
+			});
+			buttonEvents()
+		});
+	}
+	
+	addUsers();
+	
+	$("#search-form").on("submit", function( event)
+	{
+		event.preventDefault();
+		
+		var sWord = document.getElementById("search-field").value;
+		if(sWord != "" && sWord !== 'undefined')
+		{
+			// GET USERS AS JSON FROM API
+			$.getJSON("http://localhost:8080/Projekt/rest/users/search/" + sWord 
+			, function(user) {
+				
+				// REMOVE OLD DATA
+				amountOfUsers == 0;
+				$('#user-table > tr').remove();
+				
+				$.each(user, function(j, object) 
+				{
+					// SAVE AMOUNT OF USERS
+					amountOfUsers++;
+					
+					// ADD USER IN USER TABLE
+					$("#user-table").append(
+							'<tr id="row-' + amountOfUsers + '">' + 
+							'<td id="id-' + amountOfUsers + '">'
+							+ object[0] + '</td>' + // ID
+							'<td><input type="text" id="table-fn-' 
+							+ amountOfUsers + '" value="'
+							+ object[2] + '"/></td>' + // FIRSTNAME
+							'<td><input type="text" id="table-ln-' 
+							+ amountOfUsers + '" value="'
+							+ object[3] + '"/></td>' + // LASTNAME
+							'<td><input type="text" id="table-e-' 
+							+ amountOfUsers + '" value="'
+							+ object[1] + '"/></td><td>' // EMAIL
+							
+							// CHANGE BUTTON. ADD USER-ID TO ID OF BUTTON
+							+ '<button id="update-' + amountOfUsers + '" class="update"' +
+							'type="button"><strong>Update</strong></button> &nbsp' +
+							
+							// DELETE BUTTON. ADD USER-ID TO ID OF BUTTON
+							'<button id="delete-' + amountOfUsers + '" class="delete"' +
+							'type="button"><strong>Delete</strong></button>' + 
+							'</td></tr>'
+					);
+				});
+				buttonEvents()
+			});
+		}
+	});
+	
+	$("#get-users").click(function()
+	{
+		addUsers();
+	});
+	
+	function buttonEvents()
+	{
 		// ADD CLICK METHOD HERE, BUTTON DOESNT EXIST BEFORE
 		$("button").click(function()
 		{
@@ -108,13 +176,14 @@ $(document).ready(function()
 						    type: "DELETE",
 						    url: "http://localhost:8080/Projekt/rest/users/" + user,			    
 						});
-						location.reload();
+						addUsers();
 					}
 				}
 			}
 		});
-	});
+	}
 	
+	// METHOD FOR UPDATE USER AJAX PUT
 	function updateUser(index)
 	{
 		// CREATE VARIABLE
@@ -144,8 +213,7 @@ $(document).ready(function()
 				    dataType: "json",
 				});
 			}
-			location.reload();
+			addUsers();
 		}
 	}
-	
 });

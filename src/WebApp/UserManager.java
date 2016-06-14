@@ -18,18 +18,18 @@ public class UserManager
 	private static final String PASSWORD = "";
 	private static final String CONN_STRING = "jdbc:mysql://localhost:3306/user";
 	
-	private Object[][] colums = {{"id", "email", "first_name", "last_name" }};
+	private Object[] colums = {"id", "email", "first_name", "last_name" };
 	
-	private String[] userType = {"user_info", "nytttable"}; 
+	private String[] userType = {"user_info", "search"}; 
 
 	private UserComponent everyTable = new UserGroup("Every Table", 0);
 	private UserComponent user = new UserGroup("user_info", 1);
-	private UserComponent actors = new UserGroup("actors", 2);
+	private UserComponent searchTable = new UserGroup("search", 2);
 	
 	public UserManager()
 	{
 		everyTable.add(user);
-		everyTable.add(actors);
+		everyTable.add(searchTable);
 		
 		updateTable("user_info");
 	}
@@ -128,14 +128,14 @@ public class UserManager
 		// Create SQL Query depending on Table
 		String colum = "";
 		String values = "NULL";
-		for(int i = 0; i < colums[user.getUserType() - 1].length; i++)
+		for(int i = 0; i < colums.length; i++)
 		{
 			if(i != 0)
 				values += "?";
 				
-			colum += colums[user.getUserType() - 1][i];
+			colum += colums[i];
 			
-			if(i != colums[user.getUserType() - 1].length - 1)
+			if(i != colums.length - 1)
 			{
 				colum += ", ";
 				values += ", ";
@@ -207,11 +207,11 @@ public class UserManager
 	{
 		// Create SQL Query depending on Table
 		String colum = "";
-		for(int i = 1; i < colums[0].length; i++)
+		for(int i = 1; i < colums.length; i++)
 		{
-			colum += colums[0][i];
+			colum += colums[i];
 			
-			if(i != colums[0].length - 1)
+			if(i != colums.length - 1)
 			{
 				colum += " = ?, ";
 			}
@@ -305,6 +305,56 @@ public class UserManager
 			System.err.println(e);
 			return false;
 		}
+	}
+	
+	/**
+	 * Get search word and search SQL
+	 * @param sWord
+	 */
+	public void searchTables(String sWord)
+	{
+		Object[] user;
+		// SQL Query Strings
+		String sql = "SELECT id, email, first_name, last_name FROM user_info WHERE id  LIKE '%"
+					+ sWord + "%' OR email LIKE '%" + sWord + "%' OR first_name LIKE '%" + sWord + "%'"
+					+ "OR last_name LIKE '%" + sWord + "%'";
+		
+		// Clear Old Table
+		clearTable("search");
+		
+		try (
+				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+				Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = stmt.executeQuery(sql);
+			) 
+		{	
+			// Get and save rows from search
+			while(rs.next())
+			{
+				ResultSetMetaData rsmd = rs.getMetaData();
+				
+				user = new Object[rsmd.getColumnCount()];
+				
+				for(int e = 0; e < rsmd.getColumnCount(); e++)
+				{
+					user[e] = rs.getObject(e + 1);
+				}
+				
+				searchTable.add(new User(1, user));
 
+			}
+		}
+		catch (SQLException e) 
+		{
+			System.err.println("Error message: " + e.getMessage());
+			System.err.println("Error code: " + e.getErrorCode());
+			System.err.println("SQL state: " + e.getSQLState());
+		}
+		
+		if(searchTable.getTable() == null)
+		{
+			user  = new Object[] { "0", "Found", "No", "Result" };
+			searchTable.add(new User(1, user));
+		}
 	}
 }

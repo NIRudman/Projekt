@@ -31,12 +31,13 @@ import WebApp.UserManager;
 @Consumes({ "application/xml", "application/json" })
 public class UserEndpoint {
 	
-	
+	// Inject the user manager
 	@Inject
 	UserManager userManager;
 
 	/**
-	* @param user
+	* POST for inserting new Users
+	* @param user (as input)
 	* @return
 	*/
 	@POST
@@ -54,6 +55,7 @@ public class UserEndpoint {
 	}
 
 	/**
+	* GET for finding Users by Id
 	* @param id
 	* @return
 	*/
@@ -71,6 +73,7 @@ public class UserEndpoint {
 	}
 
 	/**
+	* GET for sending table of users
 	* @param startPosition
 	* @param maxResult
 	* @return
@@ -82,10 +85,24 @@ public class UserEndpoint {
 		final Object[][] users = userManager.getTable("user_info");
 		return users;
 	}
+	
+	/**
+	* GET with search param
+	* @param search
+	* @return
+	*/
+	@GET
+	@Path("/search/{search}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object[][] listSearch(@PathParam("search")String sWord) {
+		userManager.searchTables(sWord);
+		final Object[][] users = userManager.getTable("search");
+		return users;
+	}
 
 	/**
-	* @param id
-	* @param user
+	* PUT for updating user
+	* @param user (as input)
 	* @return
 	*/
 	@PUT
@@ -100,6 +117,7 @@ public class UserEndpoint {
 	}
 
 	/**
+	* DELETE user from id
 	* @param id
 	* @return
 	*/
